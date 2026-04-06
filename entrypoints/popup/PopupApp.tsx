@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { findMatchingStep } from '@/utils/storage'
-import type { RegisteredApp, LoginStep, FormFieldMeta } from '@/utils/storage'
+import type { RegisteredApp, LoginStep } from '@/utils/storage'
 
 export default function PopupApp() {
   const [currentUrl, setCurrentUrl] = useState('')
@@ -9,7 +9,7 @@ export default function PopupApp() {
 
   useEffect(() => {
     // 현재 탭 URL 가져오기
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+    browser.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       const url = tabs[0]?.url || ''
       setCurrentUrl(url)
 
@@ -22,7 +22,7 @@ export default function PopupApp() {
   }, [])
 
   const openOptions = () => {
-    chrome.runtime.openOptionsPage()
+    browser.runtime.openOptionsPage()
   }
 
   function truncateUrl(url: string, max = 40): string {
@@ -37,7 +37,7 @@ export default function PopupApp() {
 
   return (
     <div className="popup">
-      <h1>🔐 AlphaKey PM</h1>
+      <h1>🔐 AlphaKey PW Manager</h1>
 
       {matchedApp ? (
         <div className="status matched">

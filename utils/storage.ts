@@ -1,7 +1,5 @@
 import { storage } from 'wxt/utils/storage'
 
-// --- 타입 정의 ---
-
 export interface FormFieldMeta {
   role: 'username' | 'password' | 'submit'
   selector: string
@@ -29,8 +27,7 @@ export interface RegisteredApp {
   updatedAt: string
 }
 
-// --- 스토리지 ---
-
+// --- WXT 스토리지 ---
 const APPS_KEY = 'local:registeredApps'
 
 export async function getRegisteredApps(): Promise<RegisteredApp[]> {
@@ -63,10 +60,9 @@ export async function removeApp(appId: string): Promise<void> {
 }
 
 // --- URL 매칭 ---
-
-function normalizeUrl(input: string): string {
+function __normalizeUrl(input: string): string {
   let url = input.trim()
-  // 프로토콜이 없으면 https:// 추가
+  // https:// 추가
   if (!/^https?:\/\//i.test(url)) {
     url = 'https://' + url
   }
@@ -74,27 +70,26 @@ function normalizeUrl(input: string): string {
   return url.replace(/\/+$/, '')
 }
 
-function extractHost(url: string): string {
+function __extractHost(url: string): string {
   try {
-    return new URL(normalizeUrl(url)).hostname
+    return new URL(__normalizeUrl(url)).hostname
   } catch {
     return url
   }
 }
 
 export function matchUrl(pageUrl: string, registeredUrl: string): boolean {
-  const normalized = normalizeUrl(registeredUrl)
+  const normalized = __normalizeUrl(registeredUrl)
 
-  // 1. 정규화된 URL로 startsWith 비교
   if (pageUrl.startsWith(normalized)) return true
 
-  // 2. 호스트명만 비교 (경로 없이 도메인만 등록한 경우)
+  // 호스트명만 비교 (경로 없이 도메인만 등록한 경우)
   try {
     const pageHost = new URL(pageUrl).hostname
-    const regHost = extractHost(registeredUrl)
+    const regHost = __extractHost(registeredUrl)
     if (pageHost === regHost) return true
   } catch {
-    // URL 파싱 실패 시 무시
+    // TODO URL 파싱 실패 시 
   }
 
   return false
@@ -102,6 +97,8 @@ export function matchUrl(pageUrl: string, registeredUrl: string): boolean {
 
 export async function findMatchingStep(url: string): Promise<{ app: RegisteredApp, step: LoginStep } | null> {
   const apps = await getRegisteredApps()
+  
+  // 허허허,,,
   for (const app of apps) {
     for (const step of app.loginSteps) {
       for (const registeredUrl of step.urls) {

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import type { RegisteredApp, LoginStep, FormFieldMeta } from '@/utils/storage'
+import { useEffect, useState } from 'react'
+import type { RegisteredApp, LoginStep } from '@/utils/storage'
 import { getRegisteredApps, saveRegisteredApps } from '@/utils/storage'
 
 export default function OptionsApp() {
@@ -146,11 +146,11 @@ export default function OptionsApp() {
         })
       }
     }
-    chrome.runtime.onMessage.addListener(listener)
-    return () => chrome.runtime.onMessage.removeListener(listener)
+    browser.runtime.onMessage.addListener(listener)
+    return () => browser.runtime.onMessage.removeListener(listener)
   }, [])
 
-  // 주기적 새로고침 (다른 탭에서 감지된 데이터 반영)
+  // 주기적 새로고침 (다른 탭에서 감지된 데이터 반영하기 위함)
   useEffect(() => {
     const interval = setInterval(() => {
       getRegisteredApps().then(setApps)
